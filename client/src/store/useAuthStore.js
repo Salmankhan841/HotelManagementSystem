@@ -47,11 +47,12 @@ const useAuthStore = create((set) => ({
       });
       return { success: true };
     } catch (error) {
+      const errorMsg = error.response?.data?.message || (error.message ? `Connection Error: ${error.message}` : 'Login failed');
       set({ 
         isLoading: false, 
-        error: error.response?.data?.message || 'Login failed' 
+        error: errorMsg 
       });
-      return { success: false, error: error.response?.data?.message };
+      return { success: false, error: errorMsg };
     }
   },
 

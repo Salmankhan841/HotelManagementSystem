@@ -134,7 +134,7 @@ const AdminLayout = () => {
         toast.error('Access Denied: Administrative privileges required.');
       }
     } else {
-      setAuthError(res.error || 'Invalid credentials. Please verify your email and password.');
+      setAuthError(res.error || 'Authentication failed. Please check server connection.');
       toast.error(res.error || 'Authentication failed');
     }
   };
