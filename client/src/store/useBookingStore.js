@@ -243,6 +243,19 @@ const useBookingStore = create((set, get) => ({
       }));
       return { success: true };
     }
+  },
+
+  // Delete booking permanently (Admin/Manager)
+  deleteBooking: async (id) => {
+    try {
+      await api.delete(`/bookings/${id}`);
+    } catch (e) {}
+
+    set((state) => ({
+      bookings: state.bookings.filter(b => b._id !== id),
+      myBookings: state.myBookings.filter(b => b._id !== id)
+    }));
+    return { success: true };
   }
 }));
 

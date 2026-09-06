@@ -16,5 +16,6 @@ router.put('/:id/cancel', bookingController.cancelBooking);
 router.use(authMiddleware.restrictTo('admin', 'manager'));
 router.get('/', bookingController.getAllBookings);
 router.put('/:id', bookingController.updateBookingStatus);
+router.delete('/:id', bookingController.deleteBooking);
 
 module.exports = router;

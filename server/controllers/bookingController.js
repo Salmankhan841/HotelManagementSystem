@@ -181,3 +181,25 @@ exports.cancelBooking = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+// @desc    Delete booking permanently (Admin/Manager only)
+// @route   DELETE /api/bookings/:id
+// @access  Private (Admin/Manager)
+exports.deleteBooking = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking record not found' });
+    }
+
+    await Booking.findByIdAndDelete(req.params.id);
+
+    res.status(204).json({
+      status: 'success',
+      data: null
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, CheckCircle, XCircle, ShieldCheck, RefreshCw } from 'lucide-react';
+import { Search, CheckCircle, XCircle, ShieldCheck, RefreshCw, Trash2 } from 'lucide-react';
 import useBookingStore from '../../store/useBookingStore';
 import toast from 'react-hot-toast';
 
@@ -24,7 +24,7 @@ const getPaymentColor = (paymentStatus) => {
 };
 
 const AdminBookings = () => {
-  const { bookings, fetchAllBookings, updateBookingStatus, cancelBooking, isLoading } = useBookingStore();
+  const { bookings, fetchAllBookings, updateBookingStatus, cancelBooking, deleteBooking, isLoading } = useBookingStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
@@ -71,6 +71,14 @@ const AdminBookings = () => {
       const res = await cancelBooking(id);
       if (res.success) toast.success('Booking cancelled');
       else toast.error(res.error);
+    }
+  };
+
+  const handleDeleteBooking = async (id, guestName) => {
+    if (window.confirm(`Are you sure you want to permanently delete reservation for ${guestName || 'Guest'}?`)) {
+      const res = await deleteBooking(id);
+      if (res.success) toast.success('Reservation record permanently deleted');
+      else toast.error('Failed to delete reservation');
     }
   };
 
@@ -212,17 +220,24 @@ const AdminBookings = () => {
                   <td className="px-6 py-4 flex items-center justify-end gap-2 mt-2">
                     <button 
                       onClick={() => handleStatusChange(booking._id, 'Confirmed')} 
-                      className="text-gray-400 hover:text-green-600 transition-colors p-1" 
+                      className="text-gray-400 hover:text-green-600 transition-colors p-1 rounded hover:bg-green-50" 
                       title="Mark Confirmed"
                     >
                       <CheckCircle className="h-4 w-4" />
                     </button>
                     <button 
                       onClick={() => handleCancel(booking._id)} 
-                      className="text-gray-400 hover:text-red-600 transition-colors p-1" 
+                      className="text-gray-400 hover:text-amber-600 transition-colors p-1 rounded hover:bg-amber-50" 
                       title="Cancel Booking"
                     >
                       <XCircle className="h-4 w-4" />
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteBooking(booking._id, booking.user?.name)} 
+                      className="text-gray-400 hover:text-red-600 transition-colors p-1 rounded hover:bg-red-50" 
+                      title="Delete Reservation Record Permanently"
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </td>
 
