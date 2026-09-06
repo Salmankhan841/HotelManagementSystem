@@ -70,9 +70,9 @@ const RoomDetails = () => {
   const finalAmount = totalPrice + Math.round(totalPrice * 0.15);
 
   const handleOpenCheckout = () => {
-    if (!isAuthenticated) {
-      toast.error('Please login to make a reservation');
-      navigate('/login');
+    if (!isAuthenticated || !user) {
+      toast.error('Registration required: Please create an account before reserving a luxury suite.');
+      navigate('/register', { state: { redirectTo: `/rooms/${id}` } });
       return;
     }
 

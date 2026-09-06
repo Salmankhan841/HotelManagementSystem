@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import useAuthStore from '../store/useAuthStore';
 import { Loader2, Lock, Mail, Eye, EyeOff } from 'lucide-react';
@@ -15,6 +15,8 @@ const loginSchema = z.object({
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const targetPath = location.state?.redirectTo || '/';
   const { login, isLoading } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   
@@ -28,7 +30,7 @@ const Login = () => {
     const result = await login(cleanEmail, cleanPassword);
     if (result.success) {
       toast.success('Welcome back to LuxuryStay!');
-      navigate('/');
+      navigate(targetPath);
     } else {
       toast.error(result.error || 'Failed to login');
     }

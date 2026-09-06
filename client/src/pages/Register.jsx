@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import useAuthStore from '../store/useAuthStore';
 import { Loader2, User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
@@ -20,6 +20,8 @@ const registerSchema = z.object({
 
 const Register = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const targetPath = location.state?.redirectTo || '/';
   const { register: registerUser, isLoading } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -31,8 +33,8 @@ const Register = () => {
   const onSubmit = async (data) => {
     const result = await registerUser(data.name, data.email, data.password);
     if (result.success) {
-      toast.success('Registration successful! Welcome to LuxuryStay.');
-      navigate('/');
+      toast.success('Registration successful! Your account is active and saved to database.');
+      navigate(targetPath);
     } else {
       toast.error(result.error || 'Failed to register');
     }
