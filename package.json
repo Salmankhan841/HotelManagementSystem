@@ -1,0 +1,26 @@
+{
+  "name": "luxurystay-hms",
+  "version": "1.0.0",
+  "description": "LuxuryStay Hotel Management System - Full Stack Application",
+  "main": "server/server.js",
+  "scripts": {
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run server\" \"npm run client\"",
+    "server": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "start": "npm start --prefix server",
+    "install:all": "npm install --prefix server && npm install --prefix client"
+  },
+  "keywords": [
+    "hotel-management",
+    "mern",
+    "react",
+    "nodejs",
+    "mongodb"
+  ],
+  "author": "LuxuryStay",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

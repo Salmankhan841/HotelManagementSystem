@@ -1,0 +1,15 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="24" fill="#0A0D14" />
+  <path d="M50 8L88 28V72L50 92L12 72V28L50 8Z" stroke="url(#goldFav)" stroke-width="3" stroke-linejoin="round" />
+  <path d="M34 66V40L50 28L66 40V66" stroke="url(#goldFav)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M44 66V46L50 42L56 46V66" stroke="url(#goldFav)" stroke-width="2" stroke-linecap="round" />
+  <path d="M28 66H72" stroke="url(#goldFav)" stroke-width="3" stroke-linecap="round" />
+  <path d="M50 22L51.5 25.5L55 26L52.5 28.5L53.2 32L50 30L46.8 32L47.5 28.5L45 26L48.5 25.5L50 22Z" fill="url(#goldFav)" />
+  <defs>
+    <linearGradient id="goldFav" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3E7C4" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#8C6615" />
+    </linearGradient>
+  </defs>
+</svg>
