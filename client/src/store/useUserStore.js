@@ -27,11 +27,18 @@ const useUserStore = create((set, get) => ({
     set({ isLoading: true });
     try {
       const res = await api.get('/auth/users');
-      if (res.data?.data?.users && res.data.data.users.length > 0) {
-        set({ users: res.data.data.users, isLoading: false });
-      } else {
-        set({ isLoading: false });
-      }
+      const apiUsers = res.data?.data?.users || [];
+      
+      set((state) => {
+        // Merge local/fallback newly registered users so signups never disappear
+        const localOnlyUsers = state.users.filter(u => 
+          !apiUsers.some(apiU => apiU.email?.toLowerCase() === u.email?.toLowerCase())
+        );
+        return {
+          users: [...apiUsers, ...localOnlyUsers],
+          isLoading: false
+        };
+      });
     } catch (e) {
       set({ isLoading: false });
     }
