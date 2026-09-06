@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const dns = require('dns');
 
+// Disable long 10-second Mongoose query buffering when disconnected
+mongoose.set('bufferCommands', false);
+
 // Fix for SRV DNS lookup issues on MongoDB Atlas
 if (process.env.MONGODB_URI && process.env.MONGODB_URI.startsWith('mongodb+srv://')) {
   try {
@@ -17,7 +20,7 @@ const connectDB = async () => {
 
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 3000, // Fail fast in 3s if blocked/unreachable instead of hanging for 10s
+      serverSelectionTimeoutMS: 3000,
       socketTimeoutMS: 20000,
       maxPoolSize: 10,
     });

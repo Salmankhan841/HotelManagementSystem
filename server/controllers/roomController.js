@@ -6,6 +6,15 @@ const Notification = require('../models/Notification');
 // @access  Public
 exports.getAllRooms = async (req, res) => {
   try {
+    // If DB is disconnected due to IP whitelist block, return fallback fast
+    if (require('mongoose').connection.readyState !== 1) {
+      return res.status(200).json({
+        status: 'success',
+        results: 0,
+        data: { rooms: [] }
+      });
+    }
+
     const queryObj = { ...req.query };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
