@@ -9,15 +9,8 @@ const { apiLimiter, authLimiter, sanitizeInput } = require('./middleware/securit
 // Initialize express app
 const app = express();
 
-// Database connection middleware (ensures serverless lambdas are connected)
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (err) {
-    next(err);
-  }
-});
+// Connect to MongoDB Atlas (Non-blocking background connection pool)
+connectDB();
 
 // 1. Security Headers (Helmet with Cross-Origin Resource Policy)
 app.use(helmet({

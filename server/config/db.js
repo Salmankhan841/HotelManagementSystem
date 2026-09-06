@@ -11,20 +11,19 @@ if (process.env.MONGODB_URI && process.env.MONGODB_URI.startsWith('mongodb+srv:/
 }
 
 const connectDB = async () => {
-  // Re-use existing connection in serverless lambdas
   if (mongoose.connection.readyState >= 1) {
     return;
   }
 
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 8000,
-      socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 3000, // Fail fast in 3s if blocked/unreachable instead of hanging for 10s
+      socketTimeoutMS: 20000,
+      maxPoolSize: 10,
     });
     console.log(`MongoDB Atlas Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`MongoDB Atlas Connection Warning: ${error.message}`);
-    // Keep server running smoothly without crashing nodemon
   }
 };
 
