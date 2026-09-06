@@ -23,7 +23,9 @@ const Login = () => {
   });
 
   const onSubmit = async (data) => {
-    const result = await login(data.email, data.password);
+    const cleanEmail = data.email.trim().toLowerCase();
+    const cleanPassword = data.password.trim();
+    const result = await login(cleanEmail, cleanPassword);
     if (result.success) {
       toast.success('Welcome back to LuxuryStay!');
       navigate('/');

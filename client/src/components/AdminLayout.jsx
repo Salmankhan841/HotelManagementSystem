@@ -112,7 +112,10 @@ const AdminLayout = () => {
     setAuthError('');
     setIsAuthorizing(true);
 
-    const res = await login(adminEmail, adminPassword);
+    const cleanEmail = adminEmail.trim().toLowerCase();
+    const cleanPassword = adminPassword.trim();
+
+    const res = await login(cleanEmail, cleanPassword);
     setIsAuthorizing(false);
 
     if (res.success) {
