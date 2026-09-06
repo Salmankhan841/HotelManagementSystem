@@ -23,10 +23,8 @@ const connectDB = async () => {
     });
     console.log(`MongoDB Atlas Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error(`Error connecting to MongoDB: ${error.message}`);
-    if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-      process.exit(1);
-    }
+    console.error(`MongoDB Atlas Connection Warning: ${error.message}`);
+    // Keep server running smoothly without crashing nodemon
   }
 };
 
