@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Review = require('../models/Review');
 const Room = require('../models/Room');
 
@@ -6,7 +7,18 @@ const Room = require('../models/Room');
 // @access  Public
 exports.getRoomReviews = async (req, res) => {
   try {
-    const reviews = await Review.find({ room: req.params.roomId }).sort('-createdAt');
+    const { roomId } = req.params;
+
+    // Handle non-ObjectId room IDs (e.g. fallback rooms) gracefully without throwing CastError 500
+    if (!roomId || !mongoose.Types.ObjectId.isValid(roomId)) {
+      return res.status(200).json({
+        status: 'success',
+        results: 0,
+        data: { reviews: [] }
+      });
+    }
+
+    const reviews = await Review.find({ room: roomId }).sort('-createdAt');
 
     res.status(200).json({
       status: 'success',
@@ -24,6 +36,10 @@ exports.getRoomReviews = async (req, res) => {
 exports.createReview = async (req, res) => {
   try {
     const { room, review, rating } = req.body;
+
+    if (!room || !mongoose.Types.ObjectId.isValid(room)) {
+      return res.status(400).json({ message: 'Invalid room ID provided.' });
+    }
 
     // Check if room exists
     const roomExists = await Room.findById(room);
