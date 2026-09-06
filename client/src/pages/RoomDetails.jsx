@@ -12,6 +12,7 @@ import useAuthStore from '../store/useAuthStore';
 import useReviewStore from '../store/useReviewStore';
 import usePaymentStore from '../store/usePaymentStore';
 import toast from 'react-hot-toast';
+import { getImageUrl } from '../utils/imageHelper';
 
 const RoomDetails = () => {
   const { id } = useParams();
@@ -188,7 +189,7 @@ const RoomDetails = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-12">
         <div className="aspect-[16/10] sm:aspect-[21/9] overflow-hidden relative rounded-2xl shadow-lg">
           {room.images && room.images.length > 0 ? (
-            <img src={`http://localhost:5000${room.images[0]}`} alt={room.name} className="w-full h-full object-cover" />
+            <img src={getImageUrl(room.images[0])} alt={room.name} className="w-full h-full object-cover" />
           ) : (
              <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">No Image</div>
           )}

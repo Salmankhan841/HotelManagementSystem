@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Search, Users, Wifi, Tv, Coffee, Star, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import useRoomStore from '../store/useRoomStore';
+import { getImageUrl } from '../utils/imageHelper';
 
 const Rooms = () => {
   const { rooms, fetchRooms, isLoading } = useRoomStore();
@@ -110,7 +111,7 @@ const Rooms = () => {
                 <div className="relative overflow-hidden aspect-[4/3]">
                   {room.images && room.images.length > 0 ? (
                     <img 
-                      src={`http://localhost:5000${room.images[0]}`} 
+                      src={getImageUrl(room.images[0])} 
                       alt={room.name} 
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
                     />

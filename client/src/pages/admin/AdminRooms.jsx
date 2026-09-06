@@ -7,6 +7,7 @@ import {
 import toast from 'react-hot-toast';
 import useRoomStore from '../../store/useRoomStore';
 import useNotificationStore from '../../store/useNotificationStore';
+import { getImageUrl } from '../../utils/imageHelper';
 
 const getStatusBadge = (status) => {
   switch (status) {
@@ -310,7 +311,7 @@ const AdminRooms = () => {
                       <div className="flex items-center gap-3">
                         {room.images && room.images.length > 0 ? (
                           <img 
-                            src={`http://localhost:5000${room.images[0]}`} 
+                            src={getImageUrl(room.images[0])} 
                             alt={room.name} 
                             className="w-14 h-14 rounded-xl object-cover border border-gray-200 shadow-sm shrink-0" 
                           />
