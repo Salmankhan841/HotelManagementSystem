@@ -80,14 +80,14 @@ const notificationRoutes = require('./routes/notificationRoutes');
 // Serve static files from the uploads directory
 app.use('/uploads', express.static('uploads'));
 
-// Mount API Routers
-app.use('/api/auth', authRoutes);
-app.use('/api/rooms', roomRoutes);
-app.use('/api/bookings', bookingRoutes);
-app.use('/api/reviews', reviewRoutes);
-app.use('/api/payment', paymentRoutes);
-app.use('/api/settings', settingRoutes);
-app.use('/api/notifications', notificationRoutes);
+// Mount API Routers (supporting both /api prefix and direct serverless routes)
+app.use(['/api/auth', '/auth'], authRoutes);
+app.use(['/api/rooms', '/rooms'], roomRoutes);
+app.use(['/api/bookings', '/bookings'], bookingRoutes);
+app.use(['/api/reviews', '/reviews'], reviewRoutes);
+app.use(['/api/payment', '/payment'], paymentRoutes);
+app.use(['/api/settings', '/settings'], settingRoutes);
+app.use(['/api/notifications', '/notifications'], notificationRoutes);
 
 // 404 Route Handler
 app.use((req, res, next) => {
