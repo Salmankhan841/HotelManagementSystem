@@ -9,8 +9,15 @@ const { apiLimiter, authLimiter, sanitizeInput } = require('./middleware/securit
 // Initialize express app
 const app = express();
 
-// Connect to database
-connectDB();
+// Database connection middleware (ensures serverless lambdas are connected)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 // 1. Security Headers (Helmet with Cross-Origin Resource Policy)
 app.use(helmet({

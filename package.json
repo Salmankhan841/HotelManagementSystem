@@ -8,8 +8,8 @@
     "server": "npm run dev --prefix server",
     "client": "npm run dev --prefix client",
     "build": "npm run build --prefix client",
-    "start": "npm start --prefix server",
-    "install:all": "npm install --prefix server && npm install --prefix client"
+    "start": "node server/server.js",
+    "install:all": "npm install && npm install --prefix server && npm install --prefix client"
   },
   "keywords": [
     "hotel-management",
@@ -20,6 +20,20 @@
   ],
   "author": "LuxuryStay",
   "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^8.6.2",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.9.3",
+    "morgan": "^1.11.0",
+    "multer": "^2.2.0",
+    "stripe": "^22.5.0"
+  },
   "devDependencies": {
     "concurrently": "^9.1.2"
   }
