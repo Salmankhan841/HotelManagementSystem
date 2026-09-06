@@ -34,7 +34,7 @@ const StatCard = ({ title, value, icon: Icon, trend }) => (
 );
 
 const Dashboard = () => {
-  const { bookings, fetchAllBookings } = useBookingStore();
+  const { bookings, fetchAllBookings, isLoading } = useBookingStore();
   const { rooms, fetchRooms } = useRoomStore();
   const { users, fetchUsers } = useUserStore();
 
@@ -125,12 +125,12 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {bookingsLoading ? (
+              {isLoading ? (
                 <tr><td colSpan="5" className="text-center py-6 text-gray-400">Loading activity...</td></tr>
-              ) : bookings.length === 0 ? (
+              ) : safeBookings.length === 0 ? (
                 <tr><td colSpan="5" className="text-center py-6 text-gray-400">No reservations recorded yet.</td></tr>
               ) : (
-                bookings.slice(0, 5).map((b) => (
+                safeBookings.slice(0, 5).map((b) => (
                   <tr key={b._id} className="hover:bg-gray-50/50">
                     <td className="px-4 py-3.5 font-medium text-gray-900">
                       <div>{b.user?.name || 'Guest User'}</div>

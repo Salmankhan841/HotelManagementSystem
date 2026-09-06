@@ -85,7 +85,7 @@ const AdminLayout = () => {
   const [isAuthorizing, setIsAuthorizing] = useState(false);
   const [authError, setAuthError] = useState('');
 
-  const isStaffOrAdmin = isAuthenticated && user && ['admin', 'manager', 'receptionist', 'housekeeping'].includes(user.role);
+  const isStaffOrAdmin = isAuthenticated && user && ['admin', 'manager', 'receptionist', 'housekeeping'].includes(user.role?.toLowerCase());
 
   useEffect(() => {
     if (isStaffOrAdmin) {
