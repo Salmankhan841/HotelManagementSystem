@@ -1,27 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Star, Wine, Sparkles, Compass, Calendar, Users, ShieldCheck, ChevronRight } from 'lucide-react';
+import { ArrowRight, Star, Wine, Sparkles, Compass, Calendar, Users, ShieldCheck, ChevronRight, Eye } from 'lucide-react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import useRoomStore from '../store/useRoomStore';
+import { getImageUrl } from '../utils/imageHelper';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { rooms, fetchRooms } = useRoomStore();
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [roomType, setRoomType] = useState('All');
 
   useEffect(() => {
-    AOS.init({ duration: 800, once: true });
-  }, []);
+    AOS.init({ 
+      duration: 800, 
+      once: true,
+      disable: window.innerWidth < 640 // Disable animation lag on mobile screens
+    });
+    fetchRooms();
+  }, [fetchRooms]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     navigate('/rooms');
   };
 
+  const featuredRooms = rooms.slice(0, 3);
+
   return (
-    <div className="w-full overflow-x-hidden">
+    <div className="w-full overflow-x-hidden bg-[#fdfdfd]">
       
       {/* Hero Section */}
       <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center bg-gray-950 overflow-hidden py-16 sm:py-24">
@@ -70,7 +80,7 @@ const Home = () => {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="w-full max-w-4xl"
           >
-            {/* Responsive Quick Reservation Bar */}
+            {/* Quick Reservation Bar */}
             <form onSubmit={handleSearch} className="bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl shadow-2xl border-t-4 border-gold-600 text-left text-gray-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
               <div>
                 <label className="block text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-1.5 flex items-center gap-1">
@@ -127,12 +137,12 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Intro Section - Responsive Asymmetrical */}
-      <section className="py-16 sm:py-24 lg:py-32 bg-[#fdfdfd]">
+      {/* Intro Heritage Section */}
+      <section className="py-16 sm:py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
             
-            <div className="lg:w-1/2" data-aos="fade-right">
+            <div className="w-full lg:w-1/2">
               <p className="text-gold-600 uppercase tracking-widest text-xs sm:text-sm font-semibold mb-3">Welcome to LuxuryStay</p>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-gray-900 mb-6 leading-tight">
                 A seamless blend of contemporary opulence and timeless grace.
@@ -149,7 +159,7 @@ const Home = () => {
               </Link>
             </div>
 
-            <div className="w-full lg:w-1/2 relative" data-aos="fade-left">
+            <div className="w-full lg:w-1/2 relative">
               <div className="aspect-[4/3] sm:aspect-[16/11] rounded-2xl overflow-hidden shadow-2xl border border-gray-100">
                 <img 
                   src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
@@ -163,11 +173,78 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Curated Experiences - Responsive Cards */}
+      {/* Featured Luxury Accommodations Showcase */}
+      <section className="py-16 sm:py-24 bg-gray-50 border-y border-gray-200/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 sm:mb-16 gap-4">
+            <div>
+              <p className="text-gold-600 uppercase tracking-widest text-xs sm:text-sm font-semibold mb-2">Bespoke Living</p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-gray-900">Featured Suites & Villas</h2>
+            </div>
+            <Link 
+              to="/rooms"
+              className="inline-flex items-center gap-2 bg-gray-900 hover:bg-gold-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors shadow-md shrink-0"
+            >
+              <span>Explore All Suites</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+            {featuredRooms.map((room) => (
+              <div 
+                key={room._id}
+                className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col"
+              >
+                <div className="relative overflow-hidden aspect-[4/3]">
+                  <img 
+                    src={getImageUrl(room.images?.[0])} 
+                    alt={room.name} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                  />
+                  <div className="absolute top-4 right-4 bg-gray-950/90 backdrop-blur-md px-3.5 py-1.5 rounded-lg text-white font-bold text-sm shadow-lg border border-white/10">
+                    ${room.price} <span className="text-gold-400 font-normal text-xs uppercase tracking-wider">/ night</span>
+                  </div>
+                  <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-md text-xs font-semibold text-gray-900 uppercase tracking-widest">
+                    {room.type}
+                  </div>
+                </div>
+
+                <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-xl font-serif text-gray-900 group-hover:text-gold-600 transition-colors">{room.name}</h3>
+                      <div className="flex items-center gap-1 text-xs font-semibold text-gray-700 bg-gold-50 px-2 py-0.5 rounded border border-gold-200">
+                        <Star className="h-3 w-3 fill-gold-500 text-gold-500" />
+                        <span>{room.ratingsAverage || 4.9}</span>
+                      </div>
+                    </div>
+                    <p className="text-gray-600 text-xs sm:text-sm line-clamp-2 font-light leading-relaxed mb-4">
+                      {room.description}
+                    </p>
+                  </div>
+
+                  <Link
+                    to={`/rooms/${room._id}`}
+                    className="w-full bg-gray-900 hover:bg-gold-600 text-white py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <span>View Suite Details</span>
+                    <Eye className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* Curated Experiences Section */}
       <section className="py-16 sm:py-24 lg:py-32 bg-gray-950 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="text-center mb-12 sm:mb-20" data-aos="fade-up">
+          <div className="text-center mb-12 sm:mb-20">
             <p className="text-gold-400 uppercase tracking-widest text-xs sm:text-sm font-semibold mb-3">Indulge & Relax</p>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif mb-4">Curated Experiences</h2>
             <div className="w-20 h-0.5 bg-gold-500 mx-auto"></div>
@@ -175,7 +252,7 @@ const Home = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
             
-            <div className="group bg-gray-900/60 p-6 rounded-2xl border border-gray-800 hover:border-gold-500/50 transition-all duration-300 flex flex-col" data-aos="fade-up" data-aos-delay="100">
+            <div className="group bg-gray-900/60 p-6 rounded-2xl border border-gray-800 hover:border-gold-500/50 transition-all duration-300 flex flex-col">
               <div className="overflow-hidden mb-6 aspect-[4/3] rounded-xl">
                 <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Dining" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
               </div>
@@ -186,7 +263,7 @@ const Home = () => {
               <p className="text-gray-400 text-sm font-light leading-relaxed flex-1">Savor exquisite culinary creations crafted by internationally acclaimed chefs.</p>
             </div>
             
-            <div className="group bg-gray-900/60 p-6 rounded-2xl border border-gray-800 hover:border-gold-500/50 transition-all duration-300 flex flex-col" data-aos="fade-up" data-aos-delay="200">
+            <div className="group bg-gray-900/60 p-6 rounded-2xl border border-gray-800 hover:border-gold-500/50 transition-all duration-300 flex flex-col">
               <div className="overflow-hidden mb-6 aspect-[4/3] rounded-xl">
                 <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Spa" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
               </div>
@@ -197,7 +274,7 @@ const Home = () => {
               <p className="text-gray-400 text-sm font-light leading-relaxed flex-1">Rejuvenate your body and mind with bespoke aromatherapy and thermal plunge pools.</p>
             </div>
 
-            <div className="group bg-gray-900/60 p-6 rounded-2xl border border-gray-800 hover:border-gold-500/50 transition-all duration-300 flex flex-col sm:col-span-2 lg:col-span-1" data-aos="fade-up" data-aos-delay="300">
+            <div className="group bg-gray-900/60 p-6 rounded-2xl border border-gray-800 hover:border-gold-500/50 transition-all duration-300 flex flex-col sm:col-span-2 lg:col-span-1">
               <div className="overflow-hidden mb-6 aspect-[4/3] rounded-xl">
                 <img src="https://images.unsplash.com/photo-1534430480872-3498386e7856?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Concierge" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
               </div>
