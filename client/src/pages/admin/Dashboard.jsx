@@ -6,6 +6,7 @@ import {
 import { Users, DollarSign, BedDouble, CalendarCheck, ShieldCheck } from 'lucide-react';
 import useBookingStore from '../../store/useBookingStore';
 import useRoomStore from '../../store/useRoomStore';
+import useUserStore from '../../store/useUserStore';
 
 const data = [
   { name: 'Mon', revenue: 4000, bookings: 4 },
@@ -33,17 +34,20 @@ const StatCard = ({ title, value, icon: Icon, trend }) => (
 );
 
 const Dashboard = () => {
-  const { bookings, fetchAllBookings, isLoading: bookingsLoading } = useBookingStore();
+  const { bookings, fetchAllBookings } = useBookingStore();
   const { rooms, fetchRooms } = useRoomStore();
+  const { users, fetchUsers } = useUserStore();
 
   useEffect(() => {
     fetchAllBookings();
     fetchRooms();
-  }, [fetchAllBookings, fetchRooms]);
+    fetchUsers();
+  }, [fetchAllBookings, fetchRooms, fetchUsers]);
 
   // Calculate live revenue from verified bookings
   const totalRevenue = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
   const activeBookingsCount = bookings.filter(b => b.status !== 'Cancelled').length;
+  const guestCount = users.filter(u => u.role === 'guest').length;
 
   return (
     <div className="space-y-6">
@@ -56,9 +60,9 @@ const Dashboard = () => {
       {/* Stats Grid - Responsive 1/2/4 cols */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <StatCard title="Total Revenue" value={`$${totalRevenue.toLocaleString()}`} icon={DollarSign} trend="+18.4% this month" />
-        <StatCard title="Total Reservations" value={activeBookingsCount.toString()} icon={CalendarCheck} trend="Live Bookings" />
+        <StatCard title="Total Reservations" value={activeBookingsCount.toString()} icon={CalendarCheck} trend="Live Reservations" />
+        <StatCard title="Registered VIP Guests" value={guestCount.toString()} icon={Users} trend="Live Directory" />
         <StatCard title="Available Suites" value={rooms.length.toString()} icon={BedDouble} trend="Active Inventory" />
-        <StatCard title="Hotel Rating" value="4.9" icon={Users} trend="Verified Guest Score" />
       </div>
 
       {/* Charts Grid - Responsive */}

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import api from '../utils/api';
+import useUserStore from './useUserStore';
 
 const useAuthStore = create((set, get) => ({
   user: null,
@@ -23,17 +24,20 @@ const useAuthStore = create((set, get) => ({
         role: 'admin'
       };
       set({ user: existingUser, isAuthenticated: true, isLoading: false });
+      useUserStore.getState().addUser(existingUser);
       return;
     }
 
     set({ isLoading: true });
     try {
       const response = await api.get('/auth/me');
+      const currentUser = response.data.data.user;
       set({ 
-        user: response.data.data.user, 
+        user: currentUser, 
         isAuthenticated: true,
         isLoading: false 
       });
+      useUserStore.getState().addUser(currentUser);
     } catch (error) {
       if (get().user) {
         set({ isLoading: false });
@@ -48,29 +52,29 @@ const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Login (With seamless fallback when backend is unreachable)
+  // Login
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     const cleanEmail = (email || '').trim().toLowerCase();
 
     try {
       const response = await api.post('/auth/login', { email: cleanEmail, password });
+      const loggedUser = response.data.data.user;
       localStorage.setItem('token', response.data.token);
       set({ 
-        user: response.data.data.user, 
+        user: loggedUser, 
         isAuthenticated: true,
         isLoading: false 
       });
+      useUserStore.getState().addUser(loggedUser);
       return { success: true };
     } catch (error) {
-      // If server responded with 401/400 (e.g. wrong password), return exact message
       if (error.response && error.response.status < 500) {
         const errorMsg = error.response.data?.message || 'Invalid credentials';
         set({ isLoading: false, error: errorMsg });
         return { success: false, error: errorMsg };
       }
 
-      // If backend is unreachable or Network Error occurs:
       console.warn('Backend server unreachable, activating seamless fallback session...');
       const isAdmin = cleanEmail.includes('asalooz') || cleanEmail.includes('salman') || cleanEmail.includes('admin') || password === 'Superadmin$999' || password === 'admin123';
       
@@ -78,7 +82,8 @@ const useAuthStore = create((set, get) => ({
         _id: isAdmin ? 'admin_offline_1' : `guest_${Date.now()}`,
         name: isAdmin ? 'Super Admin' : (cleanEmail.split('@')[0] || 'Guest User'),
         email: cleanEmail,
-        role: isAdmin ? 'admin' : 'guest'
+        role: isAdmin ? 'admin' : 'guest',
+        createdAt: new Date().toISOString()
       };
 
       localStorage.setItem('token', 'dummy_offline_jwt_token_luxurystay');
@@ -87,24 +92,28 @@ const useAuthStore = create((set, get) => ({
         isAuthenticated: true,
         isLoading: false
       });
+      useUserStore.getState().addUser(fallbackUser);
 
       return { success: true, isOffline: true };
     }
   },
 
-  // Register (With seamless fallback)
+  // Register
   register: async (name, email, password) => {
     set({ isLoading: true, error: null });
     const cleanEmail = (email || '').trim().toLowerCase();
+    const cleanName = (name || '').trim() || 'Guest User';
 
     try {
-      const response = await api.post('/auth/register', { name: (name || '').trim(), email: cleanEmail, password });
+      const response = await api.post('/auth/register', { name: cleanName, email: cleanEmail, password });
+      const newUser = response.data.data.user;
       localStorage.setItem('token', response.data.token);
       set({ 
-        user: response.data.data.user, 
+        user: newUser, 
         isAuthenticated: true,
         isLoading: false 
       });
+      useUserStore.getState().addUser(newUser);
       return { success: true };
     } catch (error) {
       if (error.response && error.response.status < 500) {
@@ -116,9 +125,10 @@ const useAuthStore = create((set, get) => ({
       console.warn('Backend server unreachable, creating seamless fallback guest session...');
       const fallbackUser = {
         _id: `guest_${Date.now()}`,
-        name: (name || '').trim() || 'Guest User',
+        name: cleanName,
         email: cleanEmail,
-        role: 'guest'
+        role: 'guest',
+        createdAt: new Date().toISOString()
       };
 
       localStorage.setItem('token', 'dummy_offline_jwt_token_luxurystay');
@@ -127,6 +137,7 @@ const useAuthStore = create((set, get) => ({
         isAuthenticated: true,
         isLoading: false
       });
+      useUserStore.getState().addUser(fallbackUser);
 
       return { success: true, isOffline: true };
     }
