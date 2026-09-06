@@ -92,24 +92,25 @@ const AdminUsers = () => {
     }
   };
 
-  // Separate Users by Category
-  const guestsList = users.filter(u => u.role === 'guest');
-  const staffList = users.filter(u => ['admin', 'manager', 'receptionist', 'housekeeping', 'staff'].includes(u.role));
+  // Separate Users by Category (Defensive Array Checks)
+  const safeUsersList = Array.isArray(users) ? users : [];
+  const guestsList = safeUsersList.filter(u => u?.role === 'guest');
+  const staffList = safeUsersList.filter(u => u?.role && ['admin', 'manager', 'receptionist', 'housekeeping', 'staff'].includes(u.role));
 
   const currentList = activeTab === 'guests' ? guestsList : staffList;
 
   const filteredList = currentList.filter(u => {
     if (!searchTerm.trim()) return true;
     const term = searchTerm.toLowerCase().trim();
-    return u.name?.toLowerCase().includes(term) || 
-           u.email?.toLowerCase().includes(term) ||
-           u.phone?.toLowerCase().includes(term) ||
-           u.department?.toLowerCase().includes(term);
+    return u?.name?.toLowerCase().includes(term) || 
+           u?.email?.toLowerCase().includes(term) ||
+           u?.phone?.toLowerCase().includes(term) ||
+           u?.department?.toLowerCase().includes(term);
   });
 
   // Calculate quick stats
-  const totalGuestSpend = guestsList.reduce((sum, g) => sum + (g.totalSpent || 0), 0);
-  const totalGuestBookings = guestsList.reduce((sum, g) => sum + (g.totalBookings || 0), 0);
+  const totalGuestSpend = guestsList.reduce((sum, g) => sum + (g?.totalSpent || 0), 0);
+  const totalGuestBookings = guestsList.reduce((sum, g) => sum + (g?.totalBookings || 0), 0);
 
   return (
     <div className="space-y-6">

@@ -37,20 +37,21 @@ const AdminBookings = () => {
     toast.success('Reservations list refreshed');
   };
 
-  const filteredBookings = bookings.filter(b => {
+  const safeBookings = Array.isArray(bookings) ? bookings : [];
+  const filteredBookings = safeBookings.filter(b => {
     // Status filter
-    if (statusFilter !== 'All' && b.status !== statusFilter) {
+    if (statusFilter !== 'All' && b?.status !== statusFilter) {
       return false;
     }
 
     // Search filter
     if (!searchTerm.trim()) return true;
     const term = searchTerm.toLowerCase().trim();
-    const guestName = b.user?.name?.toLowerCase() || '';
-    const guestEmail = b.user?.email?.toLowerCase() || '';
-    const roomNumber = b.room?.roomNumber?.toString().toLowerCase() || '';
-    const roomName = b.room?.name?.toLowerCase() || '';
-    const txnId = b.transactionId?.toLowerCase() || '';
+    const guestName = b?.user?.name?.toLowerCase() || '';
+    const guestEmail = b?.user?.email?.toLowerCase() || '';
+    const roomNumber = b?.room?.roomNumber?.toString().toLowerCase() || '';
+    const roomName = b?.room?.name?.toLowerCase() || '';
+    const txnId = b?.transactionId?.toLowerCase() || '';
 
     return guestName.includes(term) || 
            guestEmail.includes(term) || 

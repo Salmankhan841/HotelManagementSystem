@@ -93,7 +93,8 @@ const AdminRooms = () => {
   };
 
   const handleStatusChange = async (roomId, newStatus) => {
-    const targetRoom = rooms.find(r => r._id === roomId);
+    const safeRoomsList = Array.isArray(rooms) ? rooms : [];
+    const targetRoom = safeRoomsList.find(r => r?._id === roomId);
     const res = await updateRoomStatus(roomId, newStatus);
     if (res.success) {
       toast.success(`Room status updated to "${newStatus}"`);
@@ -157,12 +158,14 @@ const AdminRooms = () => {
   };
 
   // Operational metrics
-  const availableCount = rooms.filter(r => r.status === 'Available').length;
-  const occupiedCount = rooms.filter(r => r.status === 'Occupied').length;
-  const cleaningCount = rooms.filter(r => ['Cleaning', 'Inspection'].includes(r.status)).length;
-  const maintenanceCount = rooms.filter(r => r.status === 'Maintenance').length;
+  const safeRooms = Array.isArray(rooms) ? rooms : [];
+  const availableCount = safeRooms.filter(r => r?.status === 'Available').length;
+  const occupiedCount = safeRooms.filter(r => r?.status === 'Occupied').length;
+  const cleaningCount = safeRooms.filter(r => ['Cleaning', 'Inspection'].includes(r?.status)).length;
+  const maintenanceCount = safeRooms.filter(r => r?.status === 'Maintenance').length;
 
-  const filteredRooms = rooms.filter(r => {
+  const filteredRooms = safeRooms.filter(r => {
+    if (!r) return false;
     if (statusFilter !== 'All' && r.status !== statusFilter) return false;
     if (!searchTerm.trim()) return true;
     const term = searchTerm.toLowerCase().trim();

@@ -44,10 +44,14 @@ const Dashboard = () => {
     fetchUsers();
   }, [fetchAllBookings, fetchRooms, fetchUsers]);
 
-  // Calculate live revenue from verified bookings
-  const totalRevenue = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
-  const activeBookingsCount = bookings.filter(b => b.status !== 'Cancelled').length;
-  const guestCount = users.filter(u => u.role === 'guest').length;
+  // Calculate live revenue from verified bookings (Defensive array checks)
+  const safeBookings = Array.isArray(bookings) ? bookings : [];
+  const safeUsers = Array.isArray(users) ? users : [];
+  const safeRooms = Array.isArray(rooms) ? rooms : [];
+
+  const totalRevenue = safeBookings.reduce((sum, b) => sum + (b?.totalAmount || 0), 0);
+  const activeBookingsCount = safeBookings.filter(b => b?.status !== 'Cancelled').length;
+  const guestCount = safeUsers.filter(u => u?.role === 'guest').length;
 
   return (
     <div className="space-y-6">
@@ -62,7 +66,7 @@ const Dashboard = () => {
         <StatCard title="Total Revenue" value={`$${totalRevenue.toLocaleString()}`} icon={DollarSign} trend="+18.4% this month" />
         <StatCard title="Total Reservations" value={activeBookingsCount.toString()} icon={CalendarCheck} trend="Live Reservations" />
         <StatCard title="Registered VIP Guests" value={guestCount.toString()} icon={Users} trend="Live Directory" />
-        <StatCard title="Available Suites" value={rooms.length.toString()} icon={BedDouble} trend="Active Inventory" />
+        <StatCard title="Available Suites" value={safeRooms.length.toString()} icon={BedDouble} trend="Active Inventory" />
       </div>
 
       {/* Charts Grid - Responsive */}
