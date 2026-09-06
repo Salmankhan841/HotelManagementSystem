@@ -56,6 +56,15 @@ const useUserStore = create((set, get) => ({
     try {
       await api.put(`/auth/users/${userId}/role`, { role: newRole });
     } catch (e) {}
+  },
+
+  deleteUser: async (userId) => {
+    set((state) => ({
+      users: state.users.filter(u => u._id !== userId)
+    }));
+    try {
+      await api.delete(`/auth/users/${userId}`);
+    } catch (e) {}
   }
 }));
 

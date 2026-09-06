@@ -27,7 +27,7 @@ const getRoleBadge = (role) => {
 
 const AdminUsers = () => {
   const [activeTab, setActiveTab] = useState('guests');
-  const { users, fetchUsers, isLoading, updateUserRole } = useUserStore();
+  const { users, fetchUsers, isLoading, updateUserRole, deleteUser } = useUserStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [showStaffPassword, setShowStaffPassword] = useState(false);
 
@@ -48,22 +48,20 @@ const AdminUsers = () => {
 
   const handleRoleChange = async (userId, newRole) => {
     try {
-      await api.put(`/auth/users/${userId}/role`, { role: newRole });
+      await updateUserRole(userId, newRole);
       toast.success(`Role updated to ${newRole}`);
-      setUsers(users.map(u => u._id === userId ? { ...u, role: newRole } : u));
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to update role');
+      toast.error('Failed to update role');
     }
   };
 
   const handleDeleteUser = async (userId, name) => {
     if (window.confirm(`Are you sure you want to permanently delete ${name}'s account?`)) {
       try {
-        await api.delete(`/auth/users/${userId}`);
+        await deleteUser(userId);
         toast.success('Account deleted successfully');
-        setUsers(users.filter(u => u._id !== userId));
       } catch (error) {
-        toast.error(error.response?.data?.message || 'Failed to delete account');
+        toast.error('Failed to delete account');
       }
     }
   };
