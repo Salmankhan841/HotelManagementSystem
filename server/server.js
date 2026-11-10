@@ -1,4 +1,7 @@
-require('dotenv').config();
+const path = require('path');
+// Load .env from server directory first, fallback to root directory
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
